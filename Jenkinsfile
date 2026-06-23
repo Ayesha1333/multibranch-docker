@@ -18,11 +18,11 @@ pipeline {
             steps {
                 script {
                     docker.withRegistry('https://index.docker.io/v1/', 'dockerhub1') {
-                        docker.image('shaikmustafa/paytm').push('bank')
+                        docker.image('shaikmustafa/paytm:bank').push()
                     }
-                }
-            }
-        }
+               }
+          }
+     }
 
         stage('Deploy') {
             steps {
