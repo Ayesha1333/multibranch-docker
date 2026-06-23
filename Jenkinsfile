@@ -14,7 +14,7 @@ pipeline {
         }
         stage('Push') {
             steps {
-                scrpit {
+                script {
                     withDockerRegistry(credentialsId: 'dockerhub1') {
                         sh 'docker push shaikmustafa/paytm:movie'
                     }
