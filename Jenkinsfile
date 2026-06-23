@@ -7,24 +7,29 @@ pipeline {
                 sh 'docker build -t image1 .'
             }
         }
-        stage ("Tag") {
+
+        stage('Tag') {
             steps {
                 sh 'docker tag image1 shaikmustafa/paytm:bank'
             }
         }
+
         stage('Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'dockerhub1') {
-                        sh 'docker push shaikmustafa/paytm:bank'
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub1') {
+                        docker.image('shaikmustafa/paytm').push('bank')
                     }
                 }
             }
         }
-        
-        stage ("Deploy") {
+
+        stage('Deploy') {
             steps {
-                sh 'docker run -itd --name bank-app -p 1111:80 shaikmustafa/paytm:bank'
+                sh '''
+                  docker rm -f bank-app || true
+                  docker run -itd --name bank-app -p 1111:80 shaikmustafa/paytm:bank
+                '''
             }
         }
     }
