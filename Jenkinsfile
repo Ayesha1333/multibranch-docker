@@ -7,24 +7,29 @@ pipeline {
                 sh 'docker build -t image3 .'
             }
         }
-        stage ("Tag") {
+
+        stage('Tag') {
             steps {
                 sh 'docker tag image3 shaikmustafa/paytm:movie'
             }
         }
+
         stage('Push') {
             steps {
                 script {
-                    withDockerRegistry(credentialsId: 'dockerhub1') {
-                        sh 'docker push shaikmustafa/paytm:movie'
+                    docker.withRegistry('https://index.docker.io/v1/', 'dockerhub1') {
+                        docker.image('shaikmustafa/paytm').push('movie')
                     }
                 }
             }
         }
-        
-        stage ("Deploy") {
+
+        stage('Deploy') {
             steps {
-                sh 'docker run -itd --name movie-app -p 3333:80 shaikmustafa/paytm:movie'
+                sh '''
+                  docker rm -f movie-app || true
+                  docker run -itd --name movie-app -p 3333:80 shaikmustafa/paytm:movie
+                '''
             }
         }
     }
